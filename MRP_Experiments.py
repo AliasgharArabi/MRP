@@ -7,6 +7,7 @@ import numpy as np
 import re
 import snowballstemmer
 from nltk.corpus import stopwords
+from gensim.models import Word2Vec
  
 # read the data in 
  df = pd.read_excel('C:\\Users\\ali\\Downloads\\reddit_posts.xlsx', sheetname='combine_3coders_merge_and_posts')
@@ -73,6 +74,24 @@ def remove_punctuation(s):
     return s
 
 df['cleaned'] = df['cleaned'].apply(remove_punctuation)
+
+
+# create models to compare word similarity create by training data and pre-computed word embedding
+nltk.download('punkt')
+# create the model
+model = Word2Vec(df['tokenized_sents'], min_count=1)
+print(model)
+
+# import the word2vec file
+from gensim.models import KeyedVectors
+filename = 'C:\\Users\\ali\\Desktop\\GoogleNews-vectors-negative300.bin'
+model1 = KeyedVectors.load_word2vec_format(filename, binary=True)
+
+# find the similar terms to 2 examples
+model.similar_by_word('people')
+model1.similar_by_word('people')
+model.similar_by_word('war')
+model1.similar_by_word('war')
 
 #create a list of posts
 texts = []
